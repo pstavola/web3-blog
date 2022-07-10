@@ -9,8 +9,10 @@ module.exports = {
       chainId: 1337
     },
     // mumbai: {
-    //   url: "https://rpc-mumbai.matic.today",
-    //   accounts: [process.env.pk]
+    //   url: "https://matic-testnet-archive-rpc.bwarelabs.com",
+    //   accounts: [process.env.pk],
+    //   gasPrice: 35000000000,
+    //   saveDeployments: true,
     // },
     // polygon: {
     //   url: "https://polygon-rpc.com/",

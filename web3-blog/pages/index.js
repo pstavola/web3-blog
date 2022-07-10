@@ -73,7 +73,7 @@ export async function getServerSideProps() {
   /* and render a provider based on the environment we're in */
   let provider
   if (process.env.ENVIRONMENT === 'local') {
-    provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545/')
+    provider = new ethers.providers.JsonRpcProvider()
   } else if (process.env.ENVIRONMENT === 'testnet') {
     provider = new ethers.providers.JsonRpcProvider('https://rpc-mumbai.matic.today')
   } else {
