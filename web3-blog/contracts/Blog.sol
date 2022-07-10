@@ -1,8 +1,7 @@
 // contracts/Blog.sol
-// SPDX-License-Identifier: UNLICENSED
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
-// Import this file to use console.log
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
@@ -19,13 +18,12 @@ contract Blog {
       string content;
       bool published;
     }
-
     /* mappings can be seen as hash tables */
     /* here we create lookups for posts by id and posts by ipfs hash */
     mapping(uint => Post) private idToPost;
     mapping(string => Post) private hashToPost;
 
-    /* events facilitate communication between smart contracts and their user interfaces  */
+    /* events facilitate communication between smart contractsand their user interfaces  */
     /* i.e. we can create listeners for events in the client and also use them in The Graph  */
     event PostCreated(uint id, string title, string hash);
     event PostUpdated(uint id, string title, string hash, bool published);
@@ -62,7 +60,6 @@ contract Blog {
         post.title = title;
         post.published = true;
         post.content = hash;
-        idToPost[postId] = post;
         hashToPost[hash] = post;
         emit PostCreated(postId, title, hash);
     }

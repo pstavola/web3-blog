@@ -1,9 +1,11 @@
+/* scripts/deploy.js */
 const hre = require("hardhat");
-const fs = require("fs");
+const fs = require('fs');
 
 async function main() {
+  /* these two lines deploy the contract to the network */
   const Blog = await hre.ethers.getContractFactory("Blog");
-  const blog = await Blog.deploy("My web3 blog");
+  const blog = await Blog.deploy("My blog");
 
   await blog.deployed();
   console.log("Blog deployed to:", blog.address);
@@ -22,3 +24,4 @@ main()
     console.error(error);
     process.exit(1);
   });
+

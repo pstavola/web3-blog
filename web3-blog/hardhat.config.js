@@ -1,11 +1,12 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-waffle");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.4",
-  network: {
+  networks: {
     hardhat: {
-      chainid: 1337
+      chainId: 1337
     },
     // mumbai: {
     //   url: "https://rpc-mumbai.matic.today",
