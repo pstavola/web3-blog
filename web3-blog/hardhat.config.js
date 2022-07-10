@@ -8,12 +8,12 @@ module.exports = {
     hardhat: {
       chainId: 1337
     },
-    // mumbai: {
-    //   url: "https://matic-testnet-archive-rpc.bwarelabs.com",
-    //   accounts: [process.env.pk],
-    //   gasPrice: 35000000000,
-    //   saveDeployments: true,
-    // },
+    mumbai: {
+      url: "https://matic-testnet-archive-rpc.bwarelabs.com",
+      accounts: [process.env.pk],
+      gasPrice: 35000000000,
+      saveDeployments: true,
+    },
     // polygon: {
     //   url: "https://polygon-rpc.com/",
     //   accounts: [process.env.pk]

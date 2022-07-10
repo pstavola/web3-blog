@@ -66,8 +66,8 @@ import {
     let provider
     if (process.env.ENVIRONMENT === 'local') {
       provider = new ethers.providers.JsonRpcProvider()
-    } else if (process.env.ENVIRONMENT === 'testnet') {
-      provider = new ethers.providers.JsonRpcProvider('https://rpc-mumbai.matic.today')
+    } else if (process.env.ENVIRONMENT === 'mumbai') {
+      provider = new ethers.providers.JsonRpcProvider('https://matic-testnet-archive-rpc.bwarelabs.com')
     } else {
       provider = new ethers.providers.JsonRpcProvider('https://polygon-rpc.com/')
     }
