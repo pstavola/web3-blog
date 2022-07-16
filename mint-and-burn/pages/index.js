@@ -1,38 +1,21 @@
 /* pages/index.js */
 import { css } from '@emotion/css'
 import { ethers } from 'ethers'
-import Link from 'next/link'
-
-
-/* import Application Binary Interface (ABI) */
-// import Blog from '../artifacts/contracts/Blog.sol/Blog.json'
+import ABI from "../utils/ABI.json";
 
 export default function Home(props) {
   /* requests are fetched server side and passed in as props */
   /* see getServerSideProps */
-  const { requests } = props
+  const { mintEvents, burnEvents } = props;
+
+  console.log(mintEvents)
+  console.log(burnEvents)
 
   return (
     <div>
-      <div className={postList}>
+      <div className={eventList}>
         {
-          /* map over the requests array and render a button with the post title */
-          requests.map((post, index) => (
-            <Link href={`/post/${post[2]}`} key={index}>
-              <a>
-                <div className={linkStyle}>
-                  <p className={postTitle}>{post[1]}</p>
-                  <div className={arrowContainer}>
-                  <img
-                      src='/right-arrow.svg'
-                      alt='Right arrow'
-                      className={smallArrow}
-                    />
-                  </div>
-                </div>
-              </a>
-            </Link>
-          ))
+
         }
       </div>
     </div>
@@ -40,24 +23,22 @@ export default function Home(props) {
 }
 
 export async function getServerSideProps() {
-  /* here we check to see the current environment variable */
-  /* and render a provider based on the environment we're in */
-  let provider
-  if (process.env.ENVIRONMENT === 'local') {
-    provider = new ethers.providers.JsonRpcProvider()
-  } else if (process.env.ENVIRONMENT === 'testnet') {
-    provider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/')
-  } else {
-    provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/')
-  }
+  const wbtc = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
+  const provider = new ethers.providers.JsonRpcProvider('https://rpc.flashbots.net');
+  const contract = new ethers.Contract(wbtc, ABI, provider);
+  const blockNumber = await provider.getBlockNumber();
 
-  // const contract = new ethers.Contract(contractAddress, Blog.abi, provider)
-  // const data = await contract.fetchPosts()
+  const mintEvents = await contract.queryFilter(contract.filters.Mint(), blockNumber-100000, blockNumber);
+  const burnEvents = await contract.queryFilter(contract.filters.Burn(), blockNumber-100000, blockNumber);
+  const mintEventsData = mintEvents.reverse().slice(0, 20);
+  const burnEventsData = burnEvents.reverse().slice(0, 20);
+
   return {
     props: {
-      requests: JSON.parse(JSON.stringify("test"))//data
+      mintEvents: JSON.parse(JSON.stringify(mintEventsData)),
+      burnEvents: JSON.parse(JSON.stringify(burnEventsData))
     }
-  }
+  };
 }
 
 const arrowContainer = css`
@@ -82,7 +63,7 @@ const linkStyle = css`
   display: flex;
 `
 
-const postList = css`
+const eventList = css`
   width: 700px;
   margin: 0 auto;
   padding-top: 50px;  
