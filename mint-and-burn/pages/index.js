@@ -3,19 +3,59 @@ import { css } from '@emotion/css'
 import { ethers } from 'ethers'
 import ABI from "../utils/ABI.json";
 
+export const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/1fc7c7c3701c4083b769e561ae251f9a');
+
 export default function Home(props) {
-  /* requests are fetched server side and passed in as props */
+  /* events are fetched server side and passed in as props */
   /* see getServerSideProps */
   const { mintEvents, burnEvents } = props;
-
-  console.log(mintEvents)
-  console.log(burnEvents)
 
   return (
     <div>
       <div className={eventList}>
         {
-
+          /* map over the requests array and render a button with the post title */
+          mintEvents.map((event) => (
+            <div key={event.txn}>
+              <div className=" text-sm p-2 border-t border-gray-400">
+              <div className="flex flex-col text-sm">
+                <span className="text-gray-600 font-semibold">Txn Hash </span>
+                <span className="font-bold">{event.date}</span>
+              </div>
+              <div className="flex flex-col text-sm">
+                <span className="text-gray-600 font-semibold">From </span>
+                <span className="font-bold">{event.from}</span>
+              </div>
+              <div className="flex flex-col text-sm">
+                <span className="text-gray-600 font-semibold">Date </span>
+                <span className="font-bold">{event.txn}</span>
+              </div>
+            </div>
+            </div>
+          ))
+        }
+      </div>
+      <div className={eventList}>
+        {
+          /* map over the requests array and render a button with the post title */
+          burnEvents.map((event) => (
+            <div key={event.txn}>
+              <div className=" text-sm p-2 border-t border-gray-400">
+              <div className="flex flex-col text-sm">
+                <span className="text-gray-600 font-semibold">Txn Hash </span>
+                <span className="font-bold">{event.date}</span>
+              </div>
+              <div className="flex flex-col text-sm">
+                <span className="text-gray-600 font-semibold">From </span>
+                <span className="font-bold">{event.from}</span>
+              </div>
+              <div className="flex flex-col text-sm">
+                <span className="text-gray-600 font-semibold">Date </span>
+                <span className="font-bold">{event.txn}</span>
+              </div>
+            </div>
+            </div>
+          ))
         }
       </div>
     </div>
@@ -24,19 +64,41 @@ export default function Home(props) {
 
 export async function getServerSideProps() {
   const wbtc = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
-  const provider = new ethers.providers.JsonRpcProvider('https://rpc.flashbots.net');
   const contract = new ethers.Contract(wbtc, ABI, provider);
-  const blockNumber = await provider.getBlockNumber();
 
-  const mintEvents = await contract.queryFilter(contract.filters.Mint(), blockNumber-100000, blockNumber);
-  const burnEvents = await contract.queryFilter(contract.filters.Burn(), blockNumber-100000, blockNumber);
+  const mintEvents = await contract.queryFilter(contract.filters.Mint(), 15000000, 'latest');
+  const burnEvents = await contract.queryFilter(contract.filters.Burn(), 15000000, 'latest');
   const mintEventsData = mintEvents.reverse().slice(0, 20);
   const burnEventsData = burnEvents.reverse().slice(0, 20);
 
+  let txnHash, txn, blockNum, from, block, date;
+  const mints = new Array();
+  const burns = new Array();
+
+  for (let i = 0; i < mintEventsData.length; i++) {
+    txnHash = mintEventsData[i].transactionHash;
+    txn = await provider.getTransaction(txnHash);
+    from = txn.from;
+    blockNum = txn.blockNumber;
+    block = await provider.getBlock(blockNum);
+    date = new Date(block.timestamp * 1000).toLocaleString();
+    mints.push({date: date, from: from, txn: txnHash});
+  };
+
+  for (let i = 0; i < burnEventsData.length; i++) {
+    txn = await provider.getTransaction(burnEventsData[i].transactionHash)
+    from = txn.from
+    blockNum = txn.blockNumber
+    block = await provider.getBlock(blockNum);
+    date = new Date(block.timestamp * 1000).toLocaleString();
+    let temp = {date: date, from: from, txn: burnEventsData[i].transactionHash};
+    burns.push(temp)
+  }
+
   return {
     props: {
-      mintEvents: JSON.parse(JSON.stringify(mintEventsData)),
-      burnEvents: JSON.parse(JSON.stringify(burnEventsData))
+      mintEvents: JSON.parse(JSON.stringify(mints)),
+      burnEvents: JSON.parse(JSON.stringify(burns))
     }
   };
 }
