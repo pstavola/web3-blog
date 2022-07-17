@@ -1,6 +1,6 @@
 /* pages/__app.js */
 import { css } from '@emotion/css'
-import 'easymde/dist/easymde.min.css'
+import '../styles/table.css';
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -8,8 +8,8 @@ function MyApp({ Component, pageProps }) {
       <nav className={nav}>
         <div className={header}>
           <img
-            src='/logo.svg'
-            alt="React Logo"
+            src='/wrapped-bitcoin-wbtc-logo.svg'
+            alt="WBTC Logo"
             style={{ width: '50px' }}
           />
           <div className={titleContainer}>
@@ -19,7 +19,6 @@ function MyApp({ Component, pageProps }) {
         </div>
       </nav>
       <div className={container}>
-        <h2 className="text-2xl font-bold pb-2">Mint events</h2>
           <Component {...pageProps}/>
       </div>
     </div>
